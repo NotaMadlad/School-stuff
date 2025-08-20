@@ -1,5 +1,4 @@
-mp.onButtonEvent(mp.MultiplayerButton.A, ControllerButtonEvent.Pressed, function (player2) {
-    let mySprite: Sprite = null
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     projectile = sprites.createProjectileFromSprite(img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -17,12 +16,16 @@ mp.onButtonEvent(mp.MultiplayerButton.A, ControllerButtonEvent.Pressed, function
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        `, mySprite, 50, 50)
+        `, mySprite, -500, 0)
+    projectile.scale += -0.5
 })
-info.onScore(15, function () {
-	
+sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
+    myEnemy.setPosition(20, randint(0, 120))
+    info.changeScoreBy(1)
 })
 let projectile: Sprite = null
+let myEnemy: Sprite = null
+let mySprite: Sprite = null
 scene.setBackgroundImage(img`
     ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
     ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
@@ -145,7 +148,7 @@ scene.setBackgroundImage(img`
     ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
     ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
     `)
-mp.setPlayerSprite(mp.playerSelector(mp.PlayerNumber.One), sprites.create(img`
+mySprite = sprites.create(img`
     ....ffffff.........ccc..
     ....ff22ccf.......cc4f..
     .....ffccccfff...cc44f..
@@ -162,26 +165,46 @@ mp.setPlayerSprite(mp.playerSelector(mp.PlayerNumber.One), sprites.create(img`
     .........fcc2ffffffff...
     ..........fc2ffff.......
     ...........fffff........
-    `, SpriteKind.Player))
-mp.moveWithButtons(mp.playerSelector(mp.PlayerNumber.One))
-mp.setPlayerState(mp.playerSelector(mp.PlayerNumber.One), MultiplayerState.score, 0)
-mp.setPlayerSprite(mp.playerSelector(mp.PlayerNumber.Two), sprites.create(img`
-    ....ffffff.........ccc..
-    ....ff88ccf.......cc9f..
-    .....ffccccfff...cc99f..
-    ....cc89998888cccc998f..
-    ...c9b9988888888cc988f..
-    ..c999b8888888888888fc..
-    .c8b99111b888888888c88c.
-    c888b111998888ccccccc88f
-    f888888888888c888ccfffff
-    .f8888888888998888f.....
-    ..ff8888888cf998888f....
-    ....ffffffffff998888c...
-    .........f8cfffc8888c...
-    .........fcc8ffffffff...
-    ..........fc8ffff.......
-    ...........fffff........
-    `, SpriteKind.Player))
-mp.moveWithButtons(mp.playerSelector(mp.PlayerNumber.Two))
-mp.setPlayerState(mp.playerSelector(mp.PlayerNumber.Two), MultiplayerState.score, 0)
+    `, SpriteKind.Player)
+mySprite.setPosition(140, 50)
+controller.moveSprite(mySprite, 0, 250)
+mySprite.setStayInScreen(true)
+myEnemy = sprites.create(img`
+    ..............2222..............
+    ...........22222222222..........
+    ........2222222222222222........
+    ......22222222222222222222......
+    .....2222222221111222222222.....
+    ....222222211111111112222222....
+    ...22222211111111111111222222...
+    ...22222111111222211111122222...
+    ..2222211111222222221111122222..
+    ..2222111112222222222111112222..
+    ..2222111122222112222211112222..
+    .222211112222211112222211112222.
+    .222211122222111111222221112222.
+    .222211122221112211122221112222.
+    22221112222111222211122221112222
+    22221112221112222221112221112222
+    22221112221112222221112221112222
+    22221112222111222211122221112222
+    .222211122221112211122221112222.
+    .222211122222111111222221112222.
+    .222211112222211112222211112222.
+    ..2222111122222112222211112222..
+    ..2222111112222222222111112222..
+    ..2222211111222222221111122222..
+    ...22222111111222211111122222...
+    ...22222211111111111111222222...
+    ....222222211111111112222222....
+    .....2222222221111222222222.....
+    ......22222222222222222222......
+    ........2222222222222222........
+    ...........2222222222...........
+    ..............2222..............
+    `, SpriteKind.Enemy)
+myEnemy.setPosition(20, 50)
+myEnemy.scale += -0.6
+myEnemy.setStayInScreen(true)
+info.setScore(0)
+info.startCountdown(20)
